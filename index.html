@@ -1,130 +1,109 @@
-<!doctype html>
+ <!doctype html>
 <html lang="ro">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#153b32">
+<meta name="theme-color" content="#234b76">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cântări">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Asistent cântări</title>
 <style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17231f;background:#f3f6f4}
-*{box-sizing:border-box}body{margin:0}.wrap{max-width:760px;margin:auto;padding:18px}
-header{background:#153b32;color:white;padding:24px 20px;border-radius:20px;margin:12px 0 18px}
-h1{font-size:1.65rem;margin:0 0 6px}header p{margin:0;color:#d6e5dd}
-.card{background:white;border:1px solid #dce5df;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #18382b0b}
-h2{font-size:1.1rem;margin:0 0 14px}.muted{color:#64736b;font-size:.9rem}
-label{display:block;font-weight:650;margin:10px 0 6px}
-input,select,button{font:inherit}input,select{width:100%;padding:12px;border:1px solid #cbd8d0;border-radius:10px;background:#fff}
-button{border:0;border-radius:10px;padding:12px 15px;background:#17634c;color:white;font-weight:650;cursor:pointer}
-button.secondary{background:#e8efeb;color:#1d4537}button.danger{background:#a93636}
-button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
-.big{background:#edf5f0;text-align:center;padding:22px;border-radius:14px;margin-top:12px}
-.big .key{font-size:clamp(2rem,8vw,3.6rem);font-weight:800;color:#17634c;min-height:1.25em}
-.big .number{font-size:1rem;color:#64736b}
-.status{padding:10px 12px;border-radius:10px;background:#f0f3f1;color:#45564d;margin-top:10px;min-height:42px}
-.status.ok{background:#e6f4eb;color:#17603e}.status.err{background:#fff0ed;color:#9a3024}
-.list{list-style:none;padding:0;margin:0}.list li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf0ee}
-.list li:last-child{border:0}.pill{background:#edf3ef;border-radius:99px;padding:4px 9px;font-size:.85rem}
-.small{font-size:.82rem}.hidden{display:none!important}
-footer{padding:12px 4px 30px;color:#68766e;font-size:.82rem;line-height:1.5}
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#172235;background:#f2f5f9}
+*{box-sizing:border-box}body{margin:0;padding:18px}.app{max-width:720px;margin:auto}
+header{background:#234b76;color:white;padding:22px;border-radius:18px;margin-bottom:16px}
+h1{margin:0 0 6px;font-size:25px}header p{margin:0;opacity:.9}
+.card{background:white;padding:18px;border-radius:16px;margin:14px 0;box-shadow:0 3px 14px #13243a12}
+label{display:block;font-weight:650;margin-bottom:7px}
+input,button{font:inherit;border-radius:10px;padding:12px;border:1px solid #cbd5e1}
+input{width:100%;background:#fff}
+button{cursor:pointer;background:#234b76;color:white;border:0;font-weight:650}
+button.secondary{background:#e8eef6;color:#234b76}
+.row{display:flex;gap:9px;align-items:center}.row>*{flex:1}
+.key{font-size:34px;font-weight:800;color:#234b76;margin:8px 0}
+.muted{color:#64748b;font-size:14px}.status{margin-top:10px;font-size:14px}
+.history{padding-left:22px}.history li{padding:5px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.actions button{flex:1;min-width:120px}
+small{color:#64748b}footer{text-align:center;color:#64748b;font-size:12px;padding:18px}
 </style>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Cântări">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<div class="wrap">
-<header><h1>🎵 Asistentul meu muzical</h1><p>Găsește gama, ascultă numărul anunțat și ține evidența cântărilor.</p></header>
-
+<div class="app">
+<header><h1>🎵 Asistent cântări</h1><p>Găsește rapid tonalitatea cântărilor 1–1000</p></header>
 <section class="card">
-<h2>1. Caută sau afișează o cântare</h2>
-<label for="songNo">Numărul cântării (1–333)</label>
-<div class="row"><input id="songNo" type="number" min="1" max="333" placeholder="Ex.: 125"><button id="findBtn">Afișează gama</button></div>
-<div class="big"><div class="number" id="shownNumber">Cântarea —</div><div class="key" id="shownKey">—</div><div class="muted" id="shownNote">Introdu un număr sau folosește microfonul.</div></div>
-<div class="row" style="margin-top:12px"><button id="markBtn">✓ Adaugă în istoricul de azi</button><button id="listenBtn" class="secondary">🎙 Pornește ascultarea</button></div>
-<div class="row" style="margin-top:9px"><button id="stopBtn" class="secondary" disabled>Oprește microfonul</button><span class="muted small">Ascultarea funcționează cât timp pagina rămâne deschisă.</span></div>
-<div id="status" class="status" role="status">Microfonul este oprit. Poți introduce numărul manual.</div>
+<label for="num">Numărul cântării</label>
+<div class="row"><input id="num" type="number" min="1" max="1000" placeholder="Ex.: 125"><button id="search">Caută</button></div>
+<div id="result" aria-live="polite"><p class="muted">Introdu un număr pentru a vedea tonalitatea.</p></div>
 </section>
-
 <section class="card">
-<h2>2. Modifică gama unei cântări</h2>
-<p class="muted">Selectează numărul, scrie tonalitatea corectă și salvează. Datele se păstrează în browserul acestui dispozitiv.</p>
-<label for="editNo">Numărul cântării</label><input id="editNo" type="number" min="1" max="333" placeholder="Ex.: 125">
-<label for="editKey">Gama / tonalitatea</label><input id="editKey" placeholder="Ex.: Sol major, Fa minor, Re♭ major">
-<div class="row" style="margin-top:12px"><button id="saveBtn">Salvează gama</button><button id="loadBtn" class="secondary">Încarcă gama existentă</button></div>
+<label for="key">Tonalitate (poți modifica)</label>
+<div class="row"><input id="key" placeholder="Ex.: Sol major / G"><button id="save">Salvează</button></div>
+<p class="muted">Modificările se păstrează pe acest dispozitiv.</p>
 </section>
-
 <section class="card">
-<h2>3. Istoricul cântărilor de azi</h2>
-<div class="row"><span id="historyCount" class="muted">0 cântări</span><button id="clearHistory" class="danger">Șterge istoricul de azi</button></div>
-<ul id="historyList" class="list"></ul><p id="emptyHistory" class="muted">Nu a fost adăugată nicio cântare astăzi.</p>
+<h2>🎙️ Recunoaștere vocală</h2>
+<p class="muted">Apasă și permite accesul la microfon. Spune numărul cântării.</p>
+<div class="actions"><button id="listen">Pornește ascultarea</button><button class="secondary" id="stop">Oprește</button></div>
+<div id="voiceStatus" class="status">Microfonul este oprit.</div>
 </section>
-
 <section class="card">
-<h2>4. Copie de siguranță și transfer</h2>
-<p class="muted">Exportă datele ca să le poți muta pe alt telefon sau browser. Pe celălalt dispozitiv, importă fișierul JSON.</p>
-<div class="row"><button id="exportBtn" class="secondary">Descarcă copia de siguranță</button><button id="importBtn" class="secondary">Importă o copie</button></div>
-<input id="importFile" type="file" accept="application/json" class="hidden">
-<p class="muted small">Baza începe cu numerele 1–333, dar gamele sunt marcate „De completat” până când le verifici din planșa originală. Nu am ghicit tonalitățile din fotografia neclară.</p>
+<div class="row"><h2 style="margin:0">Istoric</h2><button class="secondary" id="clear">Șterge istoricul</button></div>
+<ol id="history" class="history"><li class="muted">Nu există cântări în istoric.</li></ol>
+<div class="actions"><button class="secondary" id="export">Exportă copia de siguranță</button><button class="secondary" id="importBtn">Importă copia</button><input id="importFile" type="file" accept="application/json" hidden></div>
 </section>
-<footer>
-<strong>Despre microfon:</strong> recunoașterea vocală depinde de browser. Încearcă Google Chrome și permite accesul la microfon. De regulă, microfonul cere ca pagina să fie deschisă prin HTTPS sau pe localhost. Unele browsere/telefoane nu oferă recunoaștere vocală în română; în acest caz, folosește căutarea manuală. Aplicația nu păstrează înregistrări audio, doar numărul recunoscut.
-</footer>
+<footer>Aplicația păstrează tonalitățile și istoricul local în browserul dispozitivului.</footer>
 </div>
 <script>
-const TOTAL=333, $=id=>document.getElementById(id);
-const STORE='asistentCantari_v2';
-let data=loadData(), recognition=null, listening=false, lastHeard='';
-function blankData(){return {songs:Array.from({length:TOTAL},(_,i)=>({number:i+1,key:''})),history:{}}}
-function loadData(){try{const x=JSON.parse(localStorage.getItem(STORE));if(x&&Array.isArray(x.songs))return x;}catch(e){}return blankData()}
-function persist(){localStorage.setItem(STORE,JSON.stringify(data))}
-function valid(n){return Number.isInteger(n)&&n>=1&&n<=TOTAL}
-function today(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
-function song(n){return data.songs.find(s=>s.number===n)}
-function show(n){if(!valid(n)){setStatus('Introdu un număr între 1 și 333.','err');return} $('songNo').value=n;$('shownNumber').textContent='Cântarea nr. '+n;const s=song(n);$('shownKey').textContent=s?.key||'De completat';$('shownNote').textContent=s?.key?'Gama salvată':'Tonalitatea nu a fost completată încă';$('editNo').value=n;$('editKey').value=s?.key||'';}
-function setStatus(t,kind=''){ $('status').textContent=t;$('status').className='status '+kind}
-function addHistory(n){if(!valid(n))return;const day=today();data.history[day]??=[];if(!data.history[day].includes(n))data.history[day].push(n);persist();renderHistory();setStatus('Cântarea nr. '+n+' a fost adăugată în istoric.','ok')}
-function renderHistory(){const arr=data.history[today()]||[];$('historyCount').textContent=arr.length+' cântări';$('historyList').innerHTML='';$('emptyHistory').classList.toggle('hidden',arr.length>0);arr.forEach(n=>{const li=document.createElement('li');const a=document.createElement('span');a.textContent='Nr. '+n;const b=document.createElement('span');b.className='pill';b.textContent=song(n)?.key||'De completat';li.append(a,b);$('historyList').append(li)})}
-$('findBtn').onclick=()=>show(Number($('songNo').value));
-$('songNo').addEventListener('keydown',e=>{if(e.key==='Enter')show(Number(e.target.value))});
-$('saveBtn').onclick=()=>{const n=Number($('editNo').value),k=$('editKey').value.trim();if(!valid(n)||!k){setStatus('Completează un număr valid și gama.','err');return}song(n).key=k;persist();if(Number($('songNo').value)===n)show(n);renderHistory();setStatus('Gama pentru cântarea nr. '+n+' a fost salvată.','ok')};
-$('loadBtn').onclick=()=>{const n=Number($('editNo').value);if(valid(n)){$('editKey').value=song(n).key||'';setStatus('Gama existentă a fost încărcată.')}else setStatus('Introdu un număr valid.','err')};
-$('markBtn').onclick=()=>addHistory(Number($('songNo').value));
-$('clearHistory').onclick=()=>{if(confirm('Ștergi istoricul de astăzi?')){delete data.history[today()];persist();renderHistory();setStatus('Istoricul de azi a fost șters.','ok')}};
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='copie-asistent-cantari.json';a.click();URL.revokeObjectURL(a.href)};
+const MAX=1000, $=id=>document.getElementById(id);
+let current=null, keys=JSON.parse(localStorage.getItem('cantari1000_keys')||'{}'),
+history=JSON.parse(localStorage.getItem('cantari1000_history')||'[]');
+function valid(n){return Number.isInteger(n)&&n>=1&&n<=MAX}
+function show(n,add=true){
+ if(!valid(n)){ $('result').innerHTML='<p class="muted">Alege un număr între 1 și 1000.</p>';return}
+ current=n; const k=keys[n]||'De verificat';
+ $('num').value=n; $('key').value=keys[n]||'';
+ $('result').innerHTML=`<div class="muted">Cântarea nr. ${n}</div><div class="key">${escapeHtml(k)}</div><div class="muted">${keys[n]?'Tonalitate salvată':'Tonalitate necompletată'}</div>`;
+ if(add){history.unshift({n,time:new Date().toLocaleString('ro-RO')});history=history.slice(0,100);persist();renderHistory()}
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function persist(){localStorage.setItem('cantari1000_keys',JSON.stringify(keys));localStorage.setItem('cantari1000_history',JSON.stringify(history))}
+function renderHistory(){ $('history').innerHTML=history.length?history.map(x=>`<li><b>Nr. ${x.n}</b> — ${escapeHtml(keys[x.n]||'De verificat')} <small>(${escapeHtml(x.time||'')})</small></li>`).join(''):'<li class="muted">Nu există cântări în istoric.</li>'}
+$('search').onclick=()=>show(Number($('num').value));
+$('num').addEventListener('keydown',e=>{if(e.key==='Enter')show(Number($('num').value))});
+$('save').onclick=()=>{if(!valid(current)){alert('Caută mai întâi un număr între 1 și 1000.');return}const v=$('key').value.trim();if(v)keys[current]=v;else delete keys[current];persist();show(current,false);renderHistory()};
+$('clear').onclick=()=>{if(confirm('Ștergi istoricul?')){history=[];persist();renderHistory()}};
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify({keys,history},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='copie-siguranta-cantari.json';a.click();URL.revokeObjectURL(a.href)};
 $('importBtn').onclick=()=>$('importFile').click();
-$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.songs)||!x.history)throw Error();if(confirm('Importul va înlocui datele actuale. Continui?')){data=x;persist();renderHistory();show(Number($('songNo').value)||1);setStatus('Copia a fost importată.','ok')}}catch(err){setStatus('Fișier invalid sau incompatibil.','err')}e.target.value=''};
-function wordsToNumber(text){
- const t=text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,!?]/g,' ').replace(/\s+/g,' ').trim();
- const digit=t.match(/\b(\d{1,3})\b/);if(digit)return Number(digit[1]);
- const units={'zero':0,'unu':1,'una':1,'un':1,'doi':2,'doua':2,'trei':3,'patru':4,'cinci':5,'sase':6,'sapte':7,'opt':8,'noua':9};
- const teens={'zece':10,'unsprezece':11,'doisprezece':12,'douasprezece':12,'treisprezece':13,'paisprezece':14,'cincisprezece':15,'saisprezece':16,'saptesprezece':17,'optsprezece':18,'nouasprezece':19};
- const tens={'douazeci':20,'treizeci':30,'patruzeci':40,'cincizeci':50,'saizeci':60,'saptezeci':70,'optzeci':80,'nouazeci':90};
- const w=t.replace(/^(cantarea|cantare|numarul|numar|este|e)\s+/,'').split(' ');
- let total=0,cur=0,found=false;
- for(let i=0;i<w.length;i++){let x=w[i];if(x==='si')continue;if(x==='suta'||x==='sute'){total+=(cur||1)*100;cur=0;found=true;continue}
- if(teens[x]!==undefined){cur+=teens[x];found=true;continue}
- if(tens[x]!==undefined){cur+=tens[x];found=true;continue}
- if(units[x]!==undefined){cur+=units[x];found=true;continue}
- if(x==='o'&&w[i+1]==='suta'){cur=1;found=true;continue}
+$('importFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());keys=d.keys||{};history=d.history||[];persist();renderHistory();if(current)show(current,false);alert('Copia a fost importată.')}catch{alert('Fișierul nu este valid.')}};
+renderHistory();
+const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
+function parseNumber(text){
+ const t=text.toLowerCase().replace(/[.,!?]/g,' ').trim();
+ const digits=t.match(/\b\d{1,4}\b/);if(digits)return Number(digits[0]);
+ const ones={'unu':1,'un':1,'una':1,'doi':2,'doua':2,'două':2,'trei':3,'patru':4,'cinci':5,'sase':6,'șase':6,'sapte':7,'șapte':7,'opt':8,'noua':9,'nouă':9};
+ const teens={'zece':10,'unsprezece':11,'doisprezece':12,'douasprezece':12,'douăsprezece':12,'treisprezece':13,'paisprezece':14,'cincisprezece':15,'saisprezece':16,'șaisprezece':16,'saptesprezece':17,'șaptesprezece':17,'optsprezece':18,'nouasprezece':19,'nouăsprezece':19};
+ const tens={'douazeci':20,'douăzeci':20,'treizeci':30,'patruzeci':40,'cincizeci':50,'saizeci':60,'șaizeci':60,'saptezeci':70,'șaptezeci':70,'optzeci':80,'nouazeci':90,'nouăzeci':90};
+ const words=t.split(/\s+/);let total=0,part=0;
+ for(let i=0;i<words.length;i++){let w=words[i].replace(/^și$/,'');if(!w)continue;
+ if(w==='o'&&words[i+1]==='suta'){part+=100;i++;continue}
+ if(w==='suta'||w==='sută'){part+=100;continue}
+ if(w==='mie'||w==='mia'){total+=(part||1)*1000;part=0;continue}
+ if(ones[w]){part+=ones[w];continue}
+ if(teens[w]){part+=teens[w];continue}
+ if(tens[w]){part+=tens[w];continue}
  }
- const n=total+cur;return found&&n>=1&&n<=TOTAL?n:null;
+ const n=total+part;return n>0?n:null;
 }
-function startListening(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){setStatus('Browserul nu oferă recunoaștere vocală. Încearcă Chrome sau introdu numărul manual.','err');return}
- recognition=new SR();recognition.lang='ro-RO';recognition.continuous=true;recognition.interimResults=false;
- recognition.onstart=()=>{listening=true;$('listenBtn').disabled=true;$('stopBtn').disabled=false;setStatus('Ascult. Spune, de exemplu: „Cântarea o sută douăzeci și cinci”.')};
- recognition.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){if(!e.results[i].isFinal)continue;const text=e.results[i][0].transcript;const n=wordsToNumber(text);if(n){if(n!==lastHeard||!data.history[today()]?.includes(n)){lastHeard=n;show(n);addHistory(n);setStatus('Am auzit „'+text+'” și am identificat cântarea '+n+'.','ok')}}else setStatus('Am auzit: „'+text+'”. Nu am identificat sigur un număr de cântare.','err')}};
- recognition.onerror=e=>setStatus('Eroare microfon: '+e.error+'. Verifică permisiunea microfonului.','err');
- recognition.onend=()=>{listening=false;$('listenBtn').disabled=false;$('stopBtn').disabled=true};
- try{recognition.start()}catch(e){setStatus('Nu am putut porni microfonul. Încearcă din nou.','err')}
+if(!Speech){$('listen').disabled=true;$('voiceStatus').textContent='Recunoașterea vocală nu este disponibilă în acest browser.'}
+else{
+ rec=new Speech();rec.lang='ro-RO';rec.continuous=true;rec.interimResults=false;
+ rec.onstart=()=>$('voiceStatus').textContent='Ascult... spune numărul cântării.';
+ rec.onend=()=>$('voiceStatus').textContent='Ascultarea s-a oprit.';
+ rec.onerror=e=>$('voiceStatus').textContent='Eroare microfon: '+e.error;
+ rec.onresult=e=>{const txt=e.results[e.results.length-1][0].transcript;const n=parseNumber(txt);if(valid(n)){ $('voiceStatus').textContent=`Am auzit „${txt}” — cântarea ${n}.`;show(n)}else{$('voiceStatus').textContent=`Am auzit „${txt}”, dar nu am identificat un număr valid.`}};
+ $('listen').onclick=()=>{try{rec.start()}catch{}};
+ $('stop').onclick=()=>{try{rec.stop()}catch{}};
 }
-function stopListening(){if(recognition&&listening)recognition.stop()}
-$('listenBtn').onclick=startListening;$('stopBtn').onclick=stopListening;
-renderHistory();show(1);
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
-<script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
-</body>
-</html>
+</body></html>
